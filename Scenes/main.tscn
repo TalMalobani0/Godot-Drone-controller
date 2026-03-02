@@ -77,7 +77,6 @@ offset_right = 830.0
 offset_bottom = 913.0
 size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 50
-toggle_mode = true
 text = "Shut motors down"
 script = ExtResource("4_jjvhh")
 

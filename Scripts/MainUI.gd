@@ -25,10 +25,10 @@ func _process(_delta: float) -> void:
 	var thrust = ((-alt.y) + 1.0) / 2.0 
 
 	# 2. Check Activation
-	var motorsActive: bool = takeoff_button.getButtonState()
-	
-	if stop_motors_button.GetButtonState():
-		if motorsActive:
+	var takeOff: bool = takeoff_button.getButtonState()
+	var motorsActive: bool = stop_motors_button.getButtonState()
+	if not motorsActive:
+		if takeOff:
 			var frontLeft = thrust + pitch + roll + yaw
 			var frontRight = thrust + pitch - roll - yaw
 			var backLeft = thrust - pitch + roll - yaw
@@ -40,6 +40,7 @@ func _process(_delta: float) -> void:
 				motors[i] = clampi(int(motors[i] * 255), 40, 255)
 		else:
 			motors = [80, 80, 80, 80]
+	else: motors = [0,0,0,0]
 
 	# 3. Only send if changed AND it's not the first frame
 	if motors != previousValue:
