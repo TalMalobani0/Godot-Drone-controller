@@ -1,0 +1,85 @@
+[gd_scene format=3 uid="uid://bjpsxuxy2ebxy"]
+
+[ext_resource type="Script" uid="uid://col1jsqbnpp4f" path="res://Scripts/MainUI.gd" id="1_bo1nx"]
+[ext_resource type="PackedScene" uid="uid://cusjl3b00tce4" path="res://Scenes/joystick.tscn" id="1_jjgbg"]
+[ext_resource type="Script" uid="uid://3uqg7yfnm6f" path="res://Scenes/takeoff button.gd" id="3_8gbba"]
+[ext_resource type="Script" uid="uid://g7e71lo6ebhc" path="res://Scenes/stop_motors_button.gd" id="4_jjvhh"]
+
+[node name="Control" type="Control" unique_id=867835369]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_bo1nx")
+
+[node name="LeftJoystick" parent="." unique_id=199874807 instance=ExtResource("1_jjgbg")]
+position = Vector2(250, 1600)
+scale = Vector2(1.5, 1.5)
+
+[node name="RightJoystick" parent="." unique_id=1084938020 instance=ExtResource("1_jjgbg")]
+position = Vector2(830, 1600)
+scale = Vector2(1.5, 1.5)
+
+[node name="Labels" type="Node" parent="." unique_id=1377919769]
+
+[node name="Title text" type="Label" parent="Labels" unique_id=598246429]
+offset_top = 84.0
+offset_right = 1080.0
+offset_bottom = 230.0
+theme_override_font_sizes/font_size = 100
+text = "Drone Controller"
+horizontal_alignment = 1
+
+[node name="LeftJoystick text" type="Label" parent="Labels" unique_id=1415819348]
+offset_left = 140.0
+offset_top = 1280.0
+offset_right = 362.0
+offset_bottom = 1349.0
+theme_override_font_sizes/font_size = 50
+text = "Direction"
+horizontal_alignment = 1
+
+[node name="RightJoystick text" type="Label" parent="Labels" unique_id=1623194218]
+offset_left = 720.0
+offset_top = 1280.0
+offset_right = 942.00037
+offset_bottom = 1349.0
+theme_override_font_sizes/font_size = 50
+text = "Height"
+horizontal_alignment = 1
+
+[node name="MotorValues text" type="Label" parent="Labels" unique_id=1938348919]
+offset_left = 250.0
+offset_top = 300.0
+offset_right = 830.0
+offset_bottom = 369.00015
+theme_override_font_sizes/font_size = 50
+horizontal_alignment = 1
+
+[node name="Buttons" type="Node" parent="." unique_id=548135632]
+
+[node name="Takeoff button" type="Button" parent="Buttons" unique_id=190279725]
+offset_left = 250.0
+offset_top = 451.0
+offset_right = 830.0
+offset_bottom = 667.0
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 50
+text = "Takeoff / Land button"
+script = ExtResource("3_8gbba")
+
+[node name="StopMotors button" type="Button" parent="Buttons" unique_id=1235264614]
+offset_left = 250.0
+offset_top = 697.0
+offset_right = 830.0
+offset_bottom = 913.0
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 50
+toggle_mode = true
+text = "Shut motors down"
+script = ExtResource("4_jjvhh")
+
+[connection signal="pressed" from="Buttons/Takeoff button" to="Buttons/Takeoff button" method="_on_pressed"]
+[connection signal="pressed" from="Buttons/StopMotors button" to="Buttons/StopMotors button" method="_on_pressed"]

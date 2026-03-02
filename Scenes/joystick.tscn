@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://cusjl3b00tce4"]
+
+[ext_resource type="Script" uid="uid://cfm6efbvgmu0m" path="res://Scripts/joystick.gd" id="1_626ei"]
+[ext_resource type="Texture2D" uid="uid://bg3y8xa68ejmc" path="res://Images/Joystick_Background.png" id="2_bmey2"]
+[ext_resource type="Texture2D" uid="uid://cq8x807lvixmk" path="res://Images/Joystick_Knob.png" id="3_uvkn4"]
+
+[node name="Joystick" type="Node2D" unique_id=199874807]
+script = ExtResource("1_626ei")
+
+[node name="Joystick_Background" type="Sprite2D" parent="." unique_id=1321326316]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_bmey2")
+
+[node name="Joystick_Knob" type="Sprite2D" parent="." unique_id=1031962481]
+scale = Vector2(0.35, 0.35)
+texture = ExtResource("3_uvkn4")
