@@ -7,59 +7,49 @@ extends Control
 @onready var motor_values_text: Label = $"Labels/MotorValues text"
 
 var udp = PacketPeerUDP.new()
-var motors = [0, 0, 0, 0]
-var previousValue = [0, 0, 0, 0]
+var previous_data = []
 var is_first_run = true
 
 func _ready() -> void:
 	udp.connect_to_host("192.168.4.1", 5050)
 
 func _process(_delta: float) -> void:
-	# 1. Get Inputs
+	# 1. Get Inputs (Converted to 0-255 range for the ESP32)
 	var move = left_joy.get_value()
 	var alt = right_joy.get_value()
 	
-	var roll = move.x
-	var pitch = -move.y
-	var yaw = alt.x
-	var thrust = ((-alt.y) + 1.0) / 2.0 
+	# Mapping joystick (-1.0 to 1.0) to byte (0 to 255)
+	# Throttle is usually 0-255, others are centered at 128
+	var throttle = int(clamp(((-alt.y) + 1.0) / 2.0 * 255, 0, 255))
+	var roll     = int(clamp((move.x + 1.0) / 2.0 * 255, 0, 255))
+	var pitch    = int(clamp(((-move.y) + 1.0) / 2.0 * 255, 0, 255))
+	var yaw      = int(clamp((alt.x + 1.0) / 2.0 * 255, 0, 255))
 
-	# 2. Check Activation
-	var takeOff: bool = takeoff_button.getButtonState()
-	var motorsActive: bool = stop_motors_button.getButtonState()
-	if not motorsActive:
-		if takeOff:
-			var frontLeft = thrust + pitch + roll + yaw
-			var frontRight = thrust + pitch - roll - yaw
-			var backLeft = thrust - pitch + roll - yaw
-			var backRight = thrust - pitch - roll + yaw
+	# 2. Check Activation States
+	var current_send_data = [0, 128, 128, 128] # Default: Motors off/level
+	
+	var is_stopped = stop_motors_button.getButtonState()
+	var is_taking_off = takeoff_button.getButtonState()
 
-			motors = [frontLeft, frontRight, backLeft, backRight]
-			
-			for i in range(4):
-				motors[i] = clampi(int(motors[i] * 255), 40, 255)
+	if not is_stopped:
+		if is_taking_off:
+			current_send_data = [throttle, pitch, roll, yaw]
 		else:
-			motors = [80, 80, 80, 80]
-	else: motors = [0,0,0,0]
+			current_send_data = [40, 128, 128, 128] # Idle spin
 
-	# 3. Only send if changed AND it's not the first frame
-	if motors != previousValue:
+	# 3. Only send if data changed
+	if current_send_data != previous_data:
 		if is_first_run:
 			is_first_run = false
 		else:
-			send_motor_speeds(motors)
+			send_to_drone(current_send_data)
+		previous_data = current_send_data
 
-	previousValue = motors.duplicate()
-
-#region functions
-func send_motor_speeds(motor_values: Array) -> void:
-	var data = PackedByteArray()
-	var strOut = "Motor values = "
-	for value in motor_values:
-		data.append(value)
-		strOut += str(value) + ", "
+func send_to_drone(data_array: Array) -> void:
+	var packet = PackedByteArray()
+	for val in data_array:
+		packet.append(val)
+	
 	if udp.get_packet_error() == OK:
-		udp.put_packet(data)
-		
-		motor_values_text.text = strOut
-#endregion
+		udp.put_packet(packet)
+		motor_values_text.text = "T:%d P:%d R:%d Y:%d" % [data_array[0], data_array[1], data_array[2], data_array[3]]
