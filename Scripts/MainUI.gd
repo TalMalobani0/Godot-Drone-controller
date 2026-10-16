@@ -14,14 +14,19 @@ func _ready() -> void:
 	udp.connect_to_host("192.168.4.1", 5050)
 
 func _process(_delta: float) -> void:
-	var move = left_joy.get_value()
-	var alt = right_joy.get_value()
+	var leftJoyStick = left_joy.get_value()
+	var rightJoyStick = right_joy.get_value()
 	
-	# Mapping joystick (-1.0 to 1.0) to byte (0 to 255) 
-	var throttle = int(clamp(((-alt.y) + 1.0) / 2.0 * 255, 0, 255))
-	var roll     = int(clamp((move.x + 1.0) / 2.0 * 255, 0, 255))
-	var pitch    = int(clamp(((-move.y) + 1.0) / 2.0 * 255, 0, 255))
-	var yaw      = int(clamp((alt.x + 1.0) / 2.0 * 255, 0, 255))
+	# Mapping joystick (-1.0 to 1.0) to byte (0 to 255)
+	var alt_y   = clampf(-rightJoyStick.y, -1.0, 1.0)
+	var move_x  = clampf(leftJoyStick.x, -1.0, 1.0)
+	var move_y  = clampf(-leftJoyStick.y, -1.0, 1.0)
+	var alt_x   = clampf(rightJoyStick.x, -1.0, 1.0) 
+	
+	var throttle = int(remap(alt_y, -1.0, 1.0, 0, 255))
+	var roll     = int(remap(move_x, -1.0, 1.0, 0, 255))
+	var pitch    = int(remap(move_y, -1.0, 1.0, 0, 255))
+	var yaw      = int(remap(alt_x, -1.0, 1.0, 0, 255))
 
 	# 2. Check Activation States
 	var current_send_data = [0, 128, 128, 128]
@@ -33,7 +38,7 @@ func _process(_delta: float) -> void:
 		if is_taking_off:
 			current_send_data = [throttle, pitch, roll, yaw]
 		else:
-			current_send_data = [40, 128, 128, 128] # Idle spin
+			current_send_data = [40, 128, 128, 128]
 
 	# only send if data changed
 	if current_send_data != previous_data:

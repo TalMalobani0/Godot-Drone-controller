@@ -2,7 +2,7 @@ extends Node2D
 
 @onready var joystick_knob: Sprite2D = $Joystick_Knob
 var max_range = 100.0  # How far the joystick_knob can move from center
-var touch_index = -1   # -1 means not being touched/clicked
+var isPressed = false
 var output = Vector2.ZERO
 
 func _input(event):
@@ -11,14 +11,14 @@ func _input(event):
 		if event.pressed:
 			# If click is inside the joystick base
 			if event.position.distance_to(global_position) < max_range:
-				touch_index = 0 # Activate
+				isPressed = true 
 		else:
 			# If button released, reset
-			touch_index = -1
+			isPressed = false
 			_reset_joystick()
 
 	# Handle Dragging
-	if (event is InputEventMouseMotion or event is InputEventScreenDrag) and touch_index != -1:
+	if (event is InputEventMouseMotion or event is InputEventScreenDrag) and isPressed != false:
 		var center = global_position
 		var vector = event.position - center
 		
