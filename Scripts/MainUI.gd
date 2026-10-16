@@ -18,15 +18,10 @@ func _process(_delta: float) -> void:
 	var rightJoyStick = right_joy.get_value()
 	
 	# Mapping joystick (-1.0 to 1.0) to byte (0 to 255)
-	var alt_y   = clampf(-rightJoyStick.y, -1.0, 1.0)
-	var move_x  = clampf(leftJoyStick.x, -1.0, 1.0)
-	var move_y  = clampf(-leftJoyStick.y, -1.0, 1.0)
-	var alt_x   = clampf(rightJoyStick.x, -1.0, 1.0) 
-	
-	var throttle = roundi(remap(alt_y, -1.0, 1.0, 0, 255))
-	var roll     = roundi(remap(move_x, -1.0, 1.0, 0, 255))
-	var pitch    = roundi(remap(move_y, -1.0, 1.0, 0, 255))
-	var yaw      = roundi(remap(alt_x, -1.0, 1.0, 0, 255))
+	var throttle = roundi(remap(clampf(-rightJoyStick.y, -1.0, 1.0), -1.0, 1.0, 0, 255))
+	var roll     = roundi(remap(clampf(leftJoyStick.x, -1.0, 1.0), -1.0, 1.0, 0, 255))
+	var pitch    = roundi(remap(clampf(-leftJoyStick.y, -1.0, 1.0), -1.0, 1.0, 0, 255))
+	var yaw      = roundi(remap(clampf(rightJoyStick.x, -1.0, 1.0) , -1.0, 1.0, 0, 255))
 
 	# 2. Check Activation States
 	var current_send_data = [0, 128, 128, 128]
